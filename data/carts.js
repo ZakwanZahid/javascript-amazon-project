@@ -61,12 +61,14 @@ export function updateDeliveryOption( productId, deliveryOptionId){
   let matchingItem;
 
     cart.forEach( cartItem => {
-      if (cartItem.productID === productID) {
+      if (cartItem.productID === productId) {
        matchingItem = cartItem; 
       }
     });
 
-    matchingItem.deliveqryOptionId = deliveryOptionId;
-    saveToStorage( );
+    if (matchingItem) {
+      matchingItem.deliveryOptionId = deliveryOptionId;
+      saveToStorage( );
+    }
 
 }

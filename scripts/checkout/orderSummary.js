@@ -1,9 +1,10 @@
 import { cart,removeFromCart, updateDeliveryOption } from '../../data/carts.js';
-import { products } from '../../data/products.js';
+import { products, getProduct } from '../../data/products.js';
 import { formatCurrency } from '../utlis/money.js'
 import { hello } from 'https://unpkg.com/supersimpledev@1.0.1/hello.esm.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
-import { deliveryOptions } from '../../data/deliveryOptions.js';
+import { deliveryOptions, getDeliveryOption } from '../../data/deliveryOptions.js';
+import { renderPaymentSummary } from './paymentSummary.js';
 
 
 hello();
@@ -20,15 +21,7 @@ export function renderOrderSummary(){
 
     const productID = cartItem.productID;
 
-    let matchingProduct;
-
-
-    products.forEach( (product) => {
-        if ( product.id === productID){
-            matchingProduct = product
-        }
-
-      });
+    const matchingProduct = getProduct(productID);
 
       if (!matchingProduct) {
       console.warn(`Product with ID ${productID} not found`);
@@ -38,16 +31,7 @@ export function renderOrderSummary(){
 
     const deliveryOptionId = cartItem.deliveryOptionId || '1';
 
-    let deliveryOption;
-
-    deliveryOptions.forEach( (option) =>
-    {
-    if( option.id === deliveryOptionId){
-        deliveryOption = option;
-
-    } 
-
-    });
+    const deliveryOption = getDeliveryOption(deliveryOptionId);
 
     if (!deliveryOption) {
       console.warn(`Delivery option with ID ${deliveryOptionId} not found`);
@@ -150,6 +134,8 @@ export function renderOrderSummary(){
       const container = document.querySelector(`.js-cart-item-container-${productId}`);
       if (container) {
         container.remove();
+
+        renderPaymentSummary();
       }
 
     });
@@ -162,6 +148,7 @@ export function renderOrderSummary(){
 
       updateDeliveryOption(productId, deliveryOptionId);
       renderOrderSummary();
+      renderPaymentSummary();
     });
 
   });
